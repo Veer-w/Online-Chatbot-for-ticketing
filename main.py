@@ -536,5 +536,36 @@ def chat():
         app.logger.error(f"Error in chat route: {str(e)}")
         return jsonify({"error": "An internal error occurred"}), 500
 
+
+@app.route('/test_db')
+def test_db():
+    try:
+        connection = create_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1")
+        result = cursor.fetchone()
+        connection.close()
+        return f"Database connection successful. Result: {result}"
+    except Exception as e:
+        return f"Database connection failed: {str(e)}"
+
+@app.route('/test_env')
+def test_env():
+    env_vars = ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'EMAIL_ADDRESS', 'EMAIL_PASSWORD']
+    results = {}
+    for var in env_vars:
+        value = os.getenv(var)
+        results[var] = 'Set' if value else 'Not set'
+    return jsonify(results)
+
+@app.route('/test_static')
+def test_static():
+    return send_from_directory('static', 'museum.png')
+
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
