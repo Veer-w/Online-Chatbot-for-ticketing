@@ -19,3 +19,9 @@ services:
         sync: false
       - key: EMAIL_PASSWORD
         sync: false
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+    healthCheckPath: /health
+    autoDeploy: true
